@@ -48,9 +48,9 @@
   </issueManagement>
 
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/directory/studio/trunk/studio-plugin/</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/directory/studio/trunk/studio-plugin/</developerConnection>
-    <url>https://svn.apache.org/repos/asf/directory/studio/trunk/studio-plugin/</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/directory/studio-plugin/trunk/</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/directory/studio-plugin/trunk/</developerConnection>
+    <url>https://svn.apache.org/repos/asf/directory/studio-plugin/trunk/</url>
   </scm>
 
   <distributionManagement>
