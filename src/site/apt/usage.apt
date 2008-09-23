@@ -37,6 +37,15 @@ Usage
 
   *{{{http://maven.apache.org/guides/introduction/introduction-to-plugin-prefix-mapping.html}Plugin Prefix}}
 
+* The <<<studio:eclipse>>> mojo
+
+Prepares the project for an Eclipse import
+
++---+
+mvn studio:eclipse
+mvn studio:clean will cleanup Eclipse specific generate stuff
++---+
+
 * The <<<studio:prefix-jar-content>>> mojo
 
 Prefix built jar
