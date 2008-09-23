@@ -19,14 +19,12 @@
  */
 package org.apache.directory.studio.maven.plugins;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.List;
@@ -34,8 +32,6 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.shared.osgi.DefaultMaven2OsgiConverter;
-import org.apache.maven.shared.osgi.Maven2OsgiConverter;
 import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
@@ -46,8 +42,8 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  * Prepares for eclipse:
  * <p>
  * <ul>
+ * <li>Fork eclipse:eclipse goal and adapt generate files where needed</li>
  * <li>Copy artifacts nonscoped "provided" to ${basedir}/lib</li>
- * <li>Add artifacts nonscoped "provided" to Bundle-ClassPath in MANIFEST.MF</li>
  * <li>Adapt ${basedir}/.classpath for artifacts nonscoped "provided"</li>
  * </ul>
  * </p>
@@ -64,11 +60,6 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  * @author <a href="mailto:dev@directory.apache.org">Apache Directory Project</a>
  */
 public class StudioEclipseMojo extends AbstractStudioMojo {
-
-	/**
-	 * Constant used for newline.
-	 */
-	private static final String NEWLINE = "\n";
 
 	/**
 	 * Bundle-ClassPath: updated with the list of dependencies.
@@ -100,10 +91,6 @@ public class StudioEclipseMojo extends AbstractStudioMojo {
 
 				// copy Artifacts
 				copyArtifacts(artifactList);
-
-				// Update Bundle-Classpath in MANIFEST.MF
-				// FIXME remove this if no longer needed
-				// updateManifest(artifactList);
 
 				// Update .classpath
 				updateDotClasspath(artifactList);
@@ -149,83 +136,6 @@ public class StudioEclipseMojo extends AbstractStudioMojo {
 				}
 			}
 		}
-	}
-
-	/**
-	 * Updates the Bundle-ClassPath entry in the manifest file
-	 * 
-	 * @param list
-	 * @throws FileNotFoundException
-	 * @throws IOException
-	 */
-	private void updateManifest(final List<Artifact> list)
-			throws FileNotFoundException, IOException {
-		final Maven2OsgiConverter maven2OsgiConverter = new DefaultMaven2OsgiConverter();
-		final File manifestFile = new File(project.getBasedir(),
-				"META-INF/MANIFEST.MF");
-		getLog().info("Update Bundle-Classpath in " + manifestFile);
-
-		// Build Bundle-ClassPath entry
-		final StringBuilder bundleClasspath = new StringBuilder(" .");
-		for (Artifact artifact : list) {
-			if (!artifact.getScope().equalsIgnoreCase("test")) {
-				bundleClasspath.append(",").append(NEWLINE).append(" ").append(
-						libraryPath).append('/').append(
-						artifact.getFile().getName());
-			}
-		}
-
-		boolean inBundleClasspathEntry = false;
-
-		// Read existing MANIFEST.MF and add existing entries
-		// to StringBuilder exept Bundle-ClassPath entry
-		StringBuilder manifestSb = new StringBuilder();
-		BufferedReader in = new BufferedReader(new InputStreamReader(
-				new FileInputStream(manifestFile), "UTF-8"));
-		String line;
-		while ((line = in.readLine()) != null) {
-			if (inBundleClasspathEntry && line.indexOf(":") > -1) {
-				inBundleClasspathEntry = false;
-			} else if (inBundleClasspathEntry) {
-				continue;
-			}
-
-			String name = line.substring(0, line.indexOf(":") + 1);
-
-			if (!name.equalsIgnoreCase(ENTRY_BUNDLE_CLASSPATH)) {
-				if (name.equalsIgnoreCase(ENTRY_BUNDLE_SYMBOLICNAME)) {
-					// get OSGI Bundle Name
-					manifestSb.append(ENTRY_BUNDLE_SYMBOLICNAME);
-					manifestSb.append(" ");
-					manifestSb.append(maven2OsgiConverter
-							.getBundleSymbolicName(project.getArtifact()));
-					manifestSb.append(";singleton:=true");
-					manifestSb.append(NEWLINE);
-				} else if (name.equalsIgnoreCase(ENTRY_BUNDLE_VERSION)) {
-					// get OSGI Bundle Version
-					manifestSb.append(ENTRY_BUNDLE_VERSION);
-					manifestSb.append(" ");
-					manifestSb.append(maven2OsgiConverter.getVersion(project
-							.getArtifact()));
-					manifestSb.append(NEWLINE);
-				} else {
-					manifestSb.append(line).append(NEWLINE);
-				}
-			} else {
-				inBundleClasspathEntry = true;
-			}
-		}
-
-		// Add Bundle-ClassPath entry
-		manifestSb.append(ENTRY_BUNDLE_CLASSPATH).append(bundleClasspath)
-				.append(NEWLINE);
-
-		// Write MANIFEST.MF
-		Writer out = new OutputStreamWriter(new FileOutputStream(manifestFile),
-				"UTF-8");
-		out.write(manifestSb.toString());
-		out.flush();
-		out.close();
 	}
 
 	/**
