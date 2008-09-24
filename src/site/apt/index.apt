@@ -51,12 +51,12 @@ Directory Studio Maven Plugin
   directory) and replaced/adds a desired file to them.
 
   * {{{eclipse-mojo.html}studio:eclipse}} prepares for eclipse:\
-      Copy artifacts nonscoped "provided" to ${basedir}/lib.\
-      Fork eclipse:eclipse goal and adapt generate files where needed.\
+      Copy artifacts not scoped "provided" to ${basedir}/lib.\
+      Fork eclipse:eclipse goal and adapt generated files where needed.\
       Fork bundle:manifest goal if configured <skip>false</skip>.\
       Adapt ${basedir}/.classpath for artifacts not scoped "provided".\
 
-  * {{{copy-eclipse-artifact-mojo.html}studio:copy-eclipse-artifact}}Copy a set of artifacts to a configured output directory 
+  * {{{copy-eclipse-artifact-mojo.html}studio:copy-eclipse-artifact}} copies a set of artifacts to a configured output directory 
   by replacing the separator between artifactId and version by an underscore instead of a dash.
 
   []
