@@ -79,7 +79,7 @@ public class StudioEclipseMojo extends AbstractStudioMojo {
 	public void execute() throws MojoExecutionException {
 		if (project.isExecutionRoot()) {
 			try {
-				forkMvnGoal("eclipse:eclipse");
+				forkMvnGoal( "eclipse:eclipse" );
 			} catch (Exception e) {
 				throw new MojoExecutionException(e.getMessage());
 			}
@@ -91,6 +91,14 @@ public class StudioEclipseMojo extends AbstractStudioMojo {
 
 				// copy Artifacts
 				copyArtifacts(artifactList);
+				
+				if (project.isExecutionRoot()) {
+			try {
+				forkMvnGoal( "bundle:manifest" );
+			} catch (Exception e) {
+				throw new MojoExecutionException(e.getMessage());
+			}
+		}
 
 				// Update .classpath
 				updateDotClasspath(artifactList);
