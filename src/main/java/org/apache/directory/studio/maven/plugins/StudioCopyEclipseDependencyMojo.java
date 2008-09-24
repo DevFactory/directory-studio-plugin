@@ -41,7 +41,7 @@ import org.apache.maven.shared.osgi.Maven2OsgiConverter;
  *              destination directory
  * @requiresProject
  * @requiresDependencyResolution runtime
- * @Since 1.0
+ * @since 1.0
  * 
  * @author <a href="mailto:dev@directory.apache.org">Apache Directory Project</a>
  */
@@ -55,6 +55,7 @@ public class StudioCopyEclipseDependencyMojo extends AbstractStudioMojo
      * 
      * @parameter
      * @required
+     * @since 1.0
      */
     protected ArrayList<ArtifactItem> artifactItems;
 
@@ -63,6 +64,7 @@ public class StudioCopyEclipseDependencyMojo extends AbstractStudioMojo
      * 
      * @parameter expression="${project.build.directory}"
      * @required
+     * @since 1.0
      */
     private File destinationDirectory;
 

@@ -38,7 +38,7 @@ import org.apache.maven.shared.osgi.Maven2OsgiConverter;
  *              location (zip or jar file)
  * @requiresProject
  * @requiresDependencyResolution runtime
- * @Since 1.0
+ * @since 1.0
  * 
  * @author <a href="mailto:dev@directory.apache.org">Apache Directory Project</a>
  */
@@ -52,6 +52,7 @@ public class StudioReplaceFileInJarMojo extends AbstractStudioMojo
      * 
      * @parameter
      * @required
+     * @since 1.0
      */
     protected ArrayList<ArtifactItem> artifactItems;
 
@@ -60,6 +61,7 @@ public class StudioReplaceFileInJarMojo extends AbstractStudioMojo
      * 
      * @parameter
      * @required
+     * @since 1.0
      */
     private File inputFile;
 
@@ -68,6 +70,7 @@ public class StudioReplaceFileInJarMojo extends AbstractStudioMojo
      * 
      * @parameter expression="${project.build.directory}"
      * @required
+     * @since 1.0
      */
     private File destinationDirectory;
 

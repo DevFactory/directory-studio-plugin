@@ -104,6 +104,7 @@ public abstract class AbstractStudioMojo extends AbstractMojo
      * 
      * @parameter expression="${skip}" default-value="true"
      * @required
+     * @since 1.0
      */
     protected boolean skip;
 
