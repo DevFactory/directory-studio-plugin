@@ -19,6 +19,7 @@
  */
 package org.apache.directory.studio.maven.plugins;
 
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -37,6 +38,7 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.codehaus.plexus.util.xml.Xpp3DomWriter;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+
 
 /**
  * Prepares for eclipse:
@@ -59,202 +61,230 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  * 
  * @author <a href="mailto:dev@directory.apache.org">Apache Directory Project</a>
  */
-public class StudioEclipseMojo extends AbstractStudioMojo {
+public class StudioEclipseMojo extends AbstractStudioMojo
+{
 
-	/**
-	 * Bundle-ClassPath: updated with the list of dependencies.
-	 */
-	public final static String ENTRY_BUNDLE_CLASSPATH = "Bundle-ClassPath:";
+    /**
+     * Bundle-ClassPath: updated with the list of dependencies.
+     */
+    public final static String ENTRY_BUNDLE_CLASSPATH = "Bundle-ClassPath:";
 
-	/**
-	 * Bundle symbolic name: updated with the artifact id.
-	 */
-	public final static String ENTRY_BUNDLE_SYMBOLICNAME = "Bundle-SymbolicName:";
+    /**
+     * Bundle symbolic name: updated with the artifact id.
+     */
+    public final static String ENTRY_BUNDLE_SYMBOLICNAME = "Bundle-SymbolicName:";
 
-	/**
-	 * Bundle version: updated with the project version.
-	 */
-	public final static String ENTRY_BUNDLE_VERSION = "Bundle-Version:";
+    /**
+     * Bundle version: updated with the project version.
+     */
+    public final static String ENTRY_BUNDLE_VERSION = "Bundle-Version:";
 
-	public void execute() throws MojoExecutionException {
-		if (project.isExecutionRoot()) {
-			try {
-				forkMvnGoal( "eclipse:eclipse" );
-			} catch (Exception e) {
-				throw new MojoExecutionException(e.getMessage());
-			}
-		}
-		if (!skip) {
-			try {
-				// Create list of used artifacts
-				final List<Artifact> artifactList = createArtifactList();
 
-				// copy Artifacts
-				copyArtifacts(artifactList);
-				
-				if (project.isExecutionRoot()) {
-			try {
-				forkMvnGoal( "bundle:manifest" );
-			} catch (Exception e) {
-				throw new MojoExecutionException(e.getMessage());
-			}
-		}
+    public void execute() throws MojoExecutionException
+    {
+        if ( project.isExecutionRoot() )
+        {
+            try
+            {
+                forkMvnGoal( "eclipse:eclipse" );
+            }
+            catch ( Exception e )
+            {
+                throw new MojoExecutionException( e.getMessage() );
+            }
+        }
+        if ( !skip )
+        {
+            try
+            {
+                // Create list of used artifacts
+                final List<Artifact> artifactList = createArtifactList();
 
-				// Update .classpath
-				updateDotClasspath(artifactList);
+                // copy Artifacts
+                copyArtifacts( artifactList );
 
-				updateDotProject();
-				removeMavenEclipseXml();
-				removeDotExternalToolBuilders();
+                if ( project.isExecutionRoot() )
+                {
+                    try
+                    {
+                        forkMvnGoal( "bundle:manifest" );
+                    }
+                    catch ( Exception e )
+                    {
+                        throw new MojoExecutionException( e.getMessage() );
+                    }
+                }
 
-			} catch (FileNotFoundException e) {
-				getLog()
-						.error(
-								"Please run eclipse:eclipse first to create .classpath, e.g. mvn eclipse:eclipse studio:eclipse.",
-								e);
-			} catch (Exception e) {
-				getLog().error(e);
-			}
-		}
-	}
+                // Update .classpath
+                updateDotClasspath( artifactList );
 
-	/**
-	 * Copy artifacts to ${basedir}/lib
-	 * 
-	 * @param list
-	 * @throws IOException
-	 */
-	private void copyArtifacts(final List<Artifact> list) throws IOException {
-		// Only proceed when we have artifacts to process
-		if (!list.isEmpty()) {
-			final File copyDir = new File(project.getBasedir(), libraryPath);
+                updateDotProject();
+                removeMavenEclipseXml();
+                removeDotExternalToolBuilders();
 
-			if (!copyDir.exists())
-				copyDir.mkdirs();
+            }
+            catch ( FileNotFoundException e )
+            {
+                getLog().error(
+                    "Please run eclipse:eclipse first to create .classpath, e.g. mvn eclipse:eclipse studio:eclipse.",
+                    e );
+            }
+            catch ( Exception e )
+            {
+                getLog().error( e );
+            }
+        }
+    }
 
-			for (Artifact artifact : list) {
-				if (!artifact.getScope().equalsIgnoreCase("test")) {
-					final File destFile = new File(copyDir, artifact.getFile()
-							.getName());
-					FileUtils.copyFile(artifact.getFile(), destFile);
-					getLog()
-							.info(
-									"Copying " + artifact.getFile() + " to "
-											+ destFile);
-				}
-			}
-		}
-	}
 
-	/**
-	 * Adapt the ${basedir}/.classpath
-	 * 
-	 * @param list
-	 */
-	private void updateDotClasspath(List<Artifact> list) throws IOException,
-			XmlPullParserException {
-		getLog().info("Update .classpath in " + project.getBasedir());
-		final InputStream is = new FileInputStream(new File(project
-				.getBasedir(), ".classpath"));
-		Xpp3Dom dom = Xpp3DomBuilder.build(is, "UTF-8");
-		int cnt = 0;
-		for (Xpp3Dom cpEntry : dom.getChildren("classpathentry")) {
-			if (cpEntry.getAttribute("kind").equals("lib")) {
-				dom.removeChild(cnt);
-				cnt--;
-			}
-			cnt++;
-		}
+    /**
+     * Copy artifacts to ${basedir}/lib
+     * 
+     * @param list
+     * @throws IOException
+     */
+    private void copyArtifacts( final List<Artifact> list ) throws IOException
+    {
+        // Only proceed when we have artifacts to process
+        if ( !list.isEmpty() )
+        {
+            final File copyDir = new File( project.getBasedir(), libraryPath );
 
-		Xpp3Dom entry;
-		for (Artifact artifact : list) {
-			if (artifact.getScope().equalsIgnoreCase("test")) {
-				entry = new Xpp3Dom("classpathentry");
-				entry.setAttribute("kind", "lib");
-				entry.setAttribute("path", (new StringBuilder()).append(
-						libraryPath).append('/').append(
-						artifact.getFile().getName()).toString());
-			} else {
-				entry = new Xpp3Dom("classpathentry");
-				entry.setAttribute("exported", "true");
-				entry.setAttribute("kind", "lib");
-				entry.setAttribute("path", (new StringBuilder()).append(
-						libraryPath).append('/').append(
-						artifact.getFile().getName()).toString());
-			}
-			dom.addChild(entry);
-		}
+            if ( !copyDir.exists() )
+                copyDir.mkdirs();
 
-		is.close();
-		Writer w = new OutputStreamWriter(new FileOutputStream(new File(project
-				.getBasedir(), ".classpath")), "UTF-8");
-		org.codehaus.plexus.util.xml.XMLWriter writer = new PrettyPrintXMLWriter(
-				w);
-		Xpp3DomWriter.write(writer, dom);
-		w.flush();
-		w.close();
-	}
+            for ( Artifact artifact : list )
+            {
+                if ( !artifact.getScope().equalsIgnoreCase( "test" ) )
+                {
+                    final File destFile = new File( copyDir, artifact.getFile().getName() );
+                    FileUtils.copyFile( artifact.getFile(), destFile );
+                    getLog().info( "Copying " + artifact.getFile() + " to " + destFile );
+                }
+            }
+        }
+    }
 
-	/**
-	 * Adapt the ${basedir}/.project
-	 * 
-	 * @param list
-	 */
-	private void updateDotProject() throws IOException, XmlPullParserException {
-		getLog().info("Update .project in " + project.getBasedir());
-		InputStream is = new FileInputStream(new File(project.getBasedir(),
-				".project"));
-		Xpp3Dom dom = Xpp3DomBuilder.build(is, "UTF-8");
-		int cnt = 0;
-		for (Xpp3Dom cpEntry : dom.getChild("buildSpec").getChildren(
-				"buildCommand")) {
-			if (cpEntry.getChild("name").getValue().equals(
-					"org.eclipse.ui.externaltools.ExternalToolBuilder")) {
-				dom.getChild("buildSpec").removeChild(cnt);
-				cnt--;
-			}
-			cnt++;
-		}
 
-		removeChildFromDom(dom, "linkedResources");
-		removeChildFromDom(dom, "projects");
+    /**
+     * Adapt the ${basedir}/.classpath
+     * 
+     * @param list
+     */
+    private void updateDotClasspath( List<Artifact> list ) throws IOException, XmlPullParserException
+    {
+        getLog().info( "Update .classpath in " + project.getBasedir() );
+        final InputStream is = new FileInputStream( new File( project.getBasedir(), ".classpath" ) );
+        Xpp3Dom dom = Xpp3DomBuilder.build( is, "UTF-8" );
+        int cnt = 0;
+        for ( Xpp3Dom cpEntry : dom.getChildren( "classpathentry" ) )
+        {
+            if ( cpEntry.getAttribute( "kind" ).equals( "lib" ) )
+            {
+                dom.removeChild( cnt );
+                cnt--;
+            }
+            cnt++;
+        }
 
-		is.close();
-		Writer w = new OutputStreamWriter(new FileOutputStream(new File(project
-				.getBasedir(), ".project")), "UTF-8");
-		org.codehaus.plexus.util.xml.XMLWriter writer = new PrettyPrintXMLWriter(
-				w);
-		Xpp3DomWriter.write(writer, dom);
-		w.flush();
-		w.close();
-	}
+        Xpp3Dom entry;
+        for ( Artifact artifact : list )
+        {
+            if ( artifact.getScope().equalsIgnoreCase( "test" ) )
+            {
+                entry = new Xpp3Dom( "classpathentry" );
+                entry.setAttribute( "kind", "lib" );
+                entry.setAttribute( "path", ( new StringBuilder() ).append( libraryPath ).append( '/' ).append(
+                    artifact.getFile().getName() ).toString() );
+            }
+            else
+            {
+                entry = new Xpp3Dom( "classpathentry" );
+                entry.setAttribute( "exported", "true" );
+                entry.setAttribute( "kind", "lib" );
+                entry.setAttribute( "path", ( new StringBuilder() ).append( libraryPath ).append( '/' ).append(
+                    artifact.getFile().getName() ).toString() );
+            }
+            dom.addChild( entry );
+        }
 
-	/**
-	 * remove ${basedir}/maven-eclipse.xml
-	 */
-	void removeMavenEclipseXml() {
-		File file = new File(project.getBasedir(), "maven-eclipse.xml");
-		if (file.exists())
-			file.delete();
-	}
+        is.close();
+        Writer w = new OutputStreamWriter( new FileOutputStream( new File( project.getBasedir(), ".classpath" ) ),
+            "UTF-8" );
+        org.codehaus.plexus.util.xml.XMLWriter writer = new PrettyPrintXMLWriter( w );
+        Xpp3DomWriter.write( writer, dom );
+        w.flush();
+        w.close();
+    }
 
-	/**
-	 * Adapt the ${basedir}/.externalToolBuilders
-	 */
-	void removeDotExternalToolBuilders() {
-		File file = new File(project.getBasedir(), ".externalToolBuilders");
-		if (file.exists())
-			deleteDirectory(file);
-	}
 
-	private void removeChildFromDom(Xpp3Dom dom, String childName) {
-		int cnt = 0;
-		for (Xpp3Dom child : dom.getChildren()) {
-			if (child.getName().equals(childName)) {
-				dom.removeChild(cnt);
-				cnt -= 1;
-			}
-			cnt += 1;
-		}
-	}
+    /**
+     * Adapt the ${basedir}/.project
+     * 
+     * @param list
+     */
+    private void updateDotProject() throws IOException, XmlPullParserException
+    {
+        getLog().info( "Update .project in " + project.getBasedir() );
+        InputStream is = new FileInputStream( new File( project.getBasedir(), ".project" ) );
+        Xpp3Dom dom = Xpp3DomBuilder.build( is, "UTF-8" );
+        int cnt = 0;
+        for ( Xpp3Dom cpEntry : dom.getChild( "buildSpec" ).getChildren( "buildCommand" ) )
+        {
+            if ( cpEntry.getChild( "name" ).getValue().equals( "org.eclipse.ui.externaltools.ExternalToolBuilder" ) )
+            {
+                dom.getChild( "buildSpec" ).removeChild( cnt );
+                cnt--;
+            }
+            cnt++;
+        }
+
+        removeChildFromDom( dom, "linkedResources" );
+        removeChildFromDom( dom, "projects" );
+
+        is.close();
+        Writer w = new OutputStreamWriter( new FileOutputStream( new File( project.getBasedir(), ".project" ) ),
+            "UTF-8" );
+        org.codehaus.plexus.util.xml.XMLWriter writer = new PrettyPrintXMLWriter( w );
+        Xpp3DomWriter.write( writer, dom );
+        w.flush();
+        w.close();
+    }
+
+
+    /**
+     * remove ${basedir}/maven-eclipse.xml
+     */
+    void removeMavenEclipseXml()
+    {
+        File file = new File( project.getBasedir(), "maven-eclipse.xml" );
+        if ( file.exists() )
+            file.delete();
+    }
+
+
+    /**
+     * Adapt the ${basedir}/.externalToolBuilders
+     */
+    void removeDotExternalToolBuilders()
+    {
+        File file = new File( project.getBasedir(), ".externalToolBuilders" );
+        if ( file.exists() )
+            deleteDirectory( file );
+    }
+
+
+    private void removeChildFromDom( Xpp3Dom dom, String childName )
+    {
+        int cnt = 0;
+        for ( Xpp3Dom child : dom.getChildren() )
+        {
+            if ( child.getName().equals( childName ) )
+            {
+                dom.removeChild( cnt );
+                cnt -= 1;
+            }
+            cnt += 1;
+        }
+    }
 }
