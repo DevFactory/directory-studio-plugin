@@ -103,16 +103,13 @@ public class StudioEclipseMojo extends AbstractStudioMojo
                 // copy Artifacts
                 copyArtifacts( artifactList );
 
-                if ( project.isExecutionRoot() )
+                try
                 {
-                    try
-                    {
-                        forkMvnGoal( "bundle:manifest" );
-                    }
-                    catch ( Exception e )
-                    {
-                        throw new MojoExecutionException( e.getMessage() );
-                    }
+                    forkMvnGoal( "bundle:manifest" );
+                }
+                catch ( Exception e )
+                {
+                    throw new MojoExecutionException( e.getMessage() );
                 }
 
                 // Update .classpath
