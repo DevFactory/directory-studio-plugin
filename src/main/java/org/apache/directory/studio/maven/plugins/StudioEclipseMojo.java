@@ -80,6 +80,22 @@ public class StudioEclipseMojo extends AbstractStudioMojo
      */
     public final static String ENTRY_BUNDLE_VERSION = "Bundle-Version:";
 
+    /**
+     * Flag if artifacts shall be copied and eclipse specific files shall be adapted.
+     * 
+     * @parameter expression="${skip}" default-value="true"
+     * @required
+     * @since 1.0
+     */
+    protected boolean skip;
+
+    /**
+     * Flag if manifest file shall be created.
+     * 
+     * @parameter expression="${createManifest}" default-value="false"
+     * @since 1.0.1
+     */
+    protected boolean createManifest;
 
     public void execute() throws MojoExecutionException
     {
@@ -103,21 +119,13 @@ public class StudioEclipseMojo extends AbstractStudioMojo
 
                 // copy Artifacts
                 copyArtifacts( artifactList );
-
-                try
-                {
-                    forkMvnGoal( "bundle:manifest" );
-                }
-                catch ( Exception e )
-                {
-                    throw new MojoExecutionException( e.getMessage() );
-                }
-
                 // Update .classpath
                 updateDotClasspath( artifactList );
-
+                // Update .project
                 updateDotProject();
+                // Remove mavenEclipseXml
                 removeMavenEclipseXml();
+                // Remove .externalToolBuilders
                 removeDotExternalToolBuilders();
 
             }
@@ -130,6 +138,17 @@ public class StudioEclipseMojo extends AbstractStudioMojo
             catch ( Exception e )
             {
                 getLog().error( e );
+            }
+        }
+        if ( createManifest )
+        {
+            try
+            {
+                forkMvnGoal( "bundle:manifest" );
+            }
+            catch ( Exception e )
+            {
+                throw new MojoExecutionException( e.getMessage() );
             }
         }
     }
