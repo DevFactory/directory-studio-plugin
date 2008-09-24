@@ -40,6 +40,7 @@ import org.apache.maven.plugin.MojoExecutionException;
  *              ${project.build.outputDirectory}/libraryPath
  * @requiresProject
  * @requiresDependencyResolution runtime
+ * @Since 1.0
  * 
  * @author <a href="mailto:dev@directory.apache.org">Apache Directory Project</a>
  */

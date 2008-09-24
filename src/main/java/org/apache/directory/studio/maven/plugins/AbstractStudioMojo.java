@@ -100,17 +100,17 @@ public abstract class AbstractStudioMojo extends AbstractMojo
     protected org.apache.maven.artifact.resolver.ArtifactResolver resolver;
 
     /**
-     * Flag if execution shall be skipped. Defaults to true.
+     * Flag if execution shall be skipped.
      * 
-     * @parameter expression="true"
+     * @parameter expression="${skip}" default-value="true"
      * @required
      */
     protected boolean skip;
 
     /**
-     * Relativ Path to copy libraries to. Defaults to lib
+     * Relativ Path to copy libraries to.
      * 
-     * @parameter expression="lib"
+     * @parameter expression="${libraryPath}" default-value="lib"
      * @required
      * @readonly
      */
@@ -159,17 +159,6 @@ public abstract class AbstractStudioMojo extends AbstractMojo
      * @required
      */
     protected MavenProject project;
-
-    /**
-     * Output absolute filename for resolved artifacts
-     * 
-     * @optional
-     * @since 2.0
-     * @parameter expression="${outputAbsoluteArtifactFilename}"
-     *            default-value="false"
-     */
-    protected boolean outputAbsoluteArtifactFilename;
-
 
     /**
      * Unpack a file to a location

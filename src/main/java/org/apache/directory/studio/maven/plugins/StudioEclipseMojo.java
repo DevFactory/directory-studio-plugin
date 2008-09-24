@@ -58,6 +58,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  *              "provided"
  * @requiresProject
  * @requiresDependencyResolution runtime
+ * @Since 1.0
  * 
  * @author <a href="mailto:dev@directory.apache.org">Apache Directory Project</a>
  */

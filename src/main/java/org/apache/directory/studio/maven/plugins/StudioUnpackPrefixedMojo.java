@@ -38,6 +38,7 @@ import org.apache.maven.shared.osgi.Maven2OsgiConverter;
  *              directory named based on the artifacts final name
  * @requiresProject
  * @requiresDependencyResolution runtime
+ * @Since 1.0
  * 
  * @author <a href="mailto:dev@directory.apache.org">Apache Directory Project</a>
  */

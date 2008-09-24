@@ -41,6 +41,7 @@ import org.apache.maven.shared.osgi.Maven2OsgiConverter;
  *              destination directory
  * @requiresProject
  * @requiresDependencyResolution runtime
+ * @Since 1.0
  * 
  * @author <a href="mailto:dev@directory.apache.org">Apache Directory Project</a>
  */
