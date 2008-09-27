@@ -24,7 +24,7 @@
     <href>http://directory.apache.org/studio/</href>
     <name>${project.name}</name>
   </bannerLeft>
-  <publishDate position="right" format="dd-MM-yyyy HH:mm"/>
+  <publishDate position="navigation-bottom" format="dd-MM-yyyy HH:mm"/>
   <version position="right"/>
   <body>
     <links>

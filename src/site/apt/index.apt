@@ -50,8 +50,8 @@ Directory Studio Maven Plugin
   * {{{eclipse-mojo.html}studio:eclipse}} prepares for eclipse:\
       Copy artifacts not scoped "provided" to ${basedir}/lib.\
       Fork eclipse:eclipse goal and adapt generated files where needed.\
-      Fork bundle:manifest goal if configured <skip>false</skip>.\
-      Adapt ${basedir}/.classpath for artifacts not scoped "provided".\
+      Fork bundle:manifest goal if configured \<skip\>false\</skip\>.\
+      Adapt $\{basedir\}/.classpath for artifacts not scoped "provided".\
 
   * {{{copy-eclipse-artifact-mojo.html}studio:copy-eclipse-artifact}} copies a set of artifacts to a configured output directory 
   by replacing the separator between artifactId and version by an underscore instead of a dash.
@@ -61,5 +61,15 @@ Directory Studio Maven Plugin
 * Usage
 
    * Instructions on how to use the dependency plugin can be found {{{usage.html}here}}.
+
+  []
+
+* Build the plugin
+
+  * Do a {{{source-repository.html}checkout}}
+  
+  * cd maven-studio-plugin
+  
+  * mvn clean install
 
   []
