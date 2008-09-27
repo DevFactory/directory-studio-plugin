@@ -23,9 +23,6 @@
   Oct 2007
   ------
   
-NOTE: THIS IS ONLY SANDBOX DOCUMENTATION!
-
-
 Directory Studio Maven Plugin
 
   The directory studio maven plugin provides the capability to manipulate artifacts. It
