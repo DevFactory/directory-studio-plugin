@@ -60,7 +60,7 @@ Prefix built jar
     <plugins>
       <plugin>
         <groupId>org.apache.directory.studio</groupId>
-        <artifactId>maven-studio-plugin</artifactId>
+        <artifactId>studio-maven-plugin</artifactId>
         <executions>
           <execution>
             <goals>
@@ -88,7 +88,7 @@ Add or replace a file to existing, distributed artifact
     <plugins>
       <plugin>
         <groupId>org.apache.directory.studio</groupId>
-        <artifactId>maven-studio-plugin</artifactId>
+        <artifactId>studio-maven-plugin</artifactId>
         <executions>
           <execution>
             <id>replace-plugin.xml-in-org.eclipse.search</id>

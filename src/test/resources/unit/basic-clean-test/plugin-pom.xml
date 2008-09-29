@@ -24,7 +24,7 @@
     <plugins>
       <plugin>
         <groupId>org.apache.directory.studio</groupId>
-        <artifactId>maven-studio-plugin</artifactId>
+        <artifactId>studio-maven-plugin</artifactId>
         <configuration>
           <project implementation="org.apache.directory.studio.maven.plugins.stubs.StudioCleanProjectStub" />
           <libraryPath>lib</libraryPath>

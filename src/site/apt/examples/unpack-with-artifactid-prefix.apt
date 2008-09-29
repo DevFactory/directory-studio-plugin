@@ -35,7 +35,7 @@ Unpack with prefix
     <plugins>
       <plugin>
         <groupId>org.apache.directory.studio</groupId>
-        <artifactId>maven-studio-plugin</artifactId>
+        <artifactId>studio-maven-plugin</artifactId>
         <executions>
         <executions>
           <execution>
