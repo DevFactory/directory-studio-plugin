@@ -32,7 +32,7 @@
   <artifactId>studio-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
   <name>Apache Directory Studio Plugin</name>
-  <version>1.0.2-SNAPSHOT</version>
+  <version>1.0.1-SNAPSHOT</version>
   <description>Maven2 plugin with specific goals for the Apache Directory Studio project</description>
   <url>http://vm094.oxylos.org/projects/studio-plugin/</url>
 
