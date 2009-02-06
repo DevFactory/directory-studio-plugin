@@ -144,6 +144,9 @@ public class StudioEclipseMojo extends AbstractStudioMojo
         {
             try
             {
+                // compile first, otherwise bundle:manifest won't create 
+                // Export-Package instructions properly
+                forkMvnGoal( "compile" );
                 forkMvnGoal( "bundle:manifest" );
             }
             catch ( Exception e )
