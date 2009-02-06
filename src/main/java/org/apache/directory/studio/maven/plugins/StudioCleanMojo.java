@@ -41,6 +41,7 @@ public class StudioCleanMojo extends AbstractStudioMojo
 
     private final String MAVEN_ECLIPSE_XML = "maven-eclipse.xml";
     private final String EXTERNAL_TOOL_BUILDERS_DIR = ".externalToolBuilders";
+    private final String META_INF = "META-INF";
 
 
     public void execute() throws MojoExecutionException
@@ -66,6 +67,9 @@ public class StudioCleanMojo extends AbstractStudioMojo
             getLog().info( "Deleting " + file );
             deleteDirectory( file );
             file = new File( project.getBasedir(), libraryPath );
+            getLog().info( "Deleting " + file );
+            deleteDirectory( file );
+            file = new File( project.getBasedir(), META_INF );
             getLog().info( "Deleting " + file );
             deleteDirectory( file );
         }
