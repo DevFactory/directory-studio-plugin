@@ -56,10 +56,14 @@
   <distributionManagement>
     <site>
       <id>apache.directory.studio.plugin</id>
-      <url>scpexe://vm094.oxylos.org/var/www/html/projects/studio-plugin/</url>
+      <url>${distributionManagement.site.url}</url>
     </site>
   </distributionManagement>
 
+  <properties>
+    <distributionManagement.site.url>scpexe://vm094.oxylos.org/var/www/html/projects/studio-plugin/</distributionManagement.site.url>
+  </properties>
+  
   <build>
     <plugins>
       <plugin>
