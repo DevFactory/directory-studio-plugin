@@ -23,7 +23,7 @@
 
   <parent>
     <groupId>org.apache.directory.project</groupId>
-    <version>14</version>
+    <version>15</version>
     <artifactId>project</artifactId>
   </parent>
 
@@ -56,12 +56,12 @@
   <distributionManagement>
     <site>
       <id>apache.directory.studio.plugin</id>
-      <url>${distributionManagement.site.url}</url>
+      <url>${distMgmtSiteUrl}</url>
     </site>
   </distributionManagement>
 
   <properties>
-    <distributionManagement.site.url>scpexe://vm094.oxylos.org/var/www/html/projects/studio-plugin/</distributionManagement.site.url>
+    <distMgmtSiteUrl>scpexe://vm094.oxylos.org/var/www/html/projects/studio-plugin/</distMgmtSiteUrl>
     <skin.version>1.0.0-SNAPSHOT</skin.version>
   </properties>
   
@@ -250,6 +250,7 @@
   </reporting>
 
   <repositories>
+    <!-- Remove me when ASF CI can deploy Snapshots -->
     <repository>
       <id>apache.directory.snapshot.repo</id>
       <name>Snapshot repository for the Apache Directory project</name>
@@ -259,5 +260,4 @@
       </releases>
     </repository>
   </repositories>
-  
 </project>
