@@ -44,6 +44,8 @@ Add or replace a file to existing, distributed artifact
             </goals>
             <configuration>
               <destinationDirectory>${studio-dir}/plugins</destinationDirectory>
+              <includeSources>false</includeSources>
+              <relaxed>true</relaxed>
               <artifactItems>
                 <artifactItem>
                   <groupId>org.apache.directory.studio</groupId>

@@ -374,14 +374,16 @@ public abstract class AbstractStudioMojo extends AbstractMojo
      * 
      * @throws MojoExecutionException
      */
-    protected void completeArtifactItems( List<ArtifactItem> artifactItems ) throws MojoExecutionException
+    protected void completeArtifactItems( List<ArtifactItem> artifactItems, boolean relaxed )
+        throws MojoExecutionException
     {
-        try
+        List<String> warnings = new ArrayList<String>();
+        // Get and complete artifacts
+        for ( Iterator<ArtifactItem> artifactItem = artifactItems.iterator(); artifactItem.hasNext(); )
         {
-            // Get and complete artifacts
-            for ( Iterator<ArtifactItem> artifactItem = artifactItems.iterator(); artifactItem.hasNext(); )
+            ArtifactItem item = artifactItem.next();
+            try
             {
-                ArtifactItem item = artifactItem.next();
                 // make sure we have a version.
                 if ( StringUtils.isEmpty( item.getVersion() ) )
                 {
@@ -389,10 +391,30 @@ public abstract class AbstractStudioMojo extends AbstractMojo
                 }
                 item.setArtifact( this.getArtifact( item ) );
             }
+            catch ( Exception e )
+            {
+                if ( relaxed )
+                {
+                    warnings.add( "Following source artifact is not available in the local repository '"
+                        + item.getGroupId() + ":" + item.getArtifactId() + ":" + item.getType() + ":"
+                        + item.getClassifier() + ":" + item.getVersion() + "'" );
+                }
+                else
+                {
+                    throw new MojoExecutionException(
+                        "Following source artifact is not available in the local repository '" + item.getGroupId()
+                            + ":" + item.getArtifactId() + ":" + item.getType() + ":" + item.getClassifier() + ":"
+                            + item.getVersion() + "'", e );
+                }
+            }
         }
-        catch ( Exception e )
+
+        if ( relaxed && !warnings.isEmpty() )
         {
-            throw new MojoExecutionException( "", e );
+            for ( String warn : warnings )
+            {
+                getLog().warn( warn );
+            }
         }
     }
 

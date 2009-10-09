@@ -24,11 +24,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.shared.osgi.DefaultMaven2OsgiConverter;
 import org.apache.maven.shared.osgi.Maven2OsgiConverter;
+import org.codehaus.plexus.util.StringUtils;
 
 
 /**
@@ -47,6 +49,26 @@ import org.apache.maven.shared.osgi.Maven2OsgiConverter;
  */
 public class StudioCopyEclipseDependencyMojo extends AbstractStudioMojo
 {
+
+    private static final String SOURCE = "source";
+
+    private static final String SOURCES = "sources";
+
+    /**
+     * Whether to include the sources for the artifacts
+     * 
+     * @parameter default-value="false"
+     * @since 1.0.3
+     */
+    protected boolean includeSources;
+
+    /**
+     * Whether not to bail out if a source artifact for the dependency is not found
+     * 
+     * @parameter default-value="true"
+     * @since 1.0.3
+     */
+    protected boolean relaxed;
 
     /**
      * Collection of ArtifactItems to work on. (ArtifactItem contains groupId,
@@ -81,8 +103,16 @@ public class StudioCopyEclipseDependencyMojo extends AbstractStudioMojo
 
     public void execute() throws MojoExecutionException
     {
-        final Maven2OsgiConverter maven2OsgiConverter = new DefaultMaven2OsgiConverter();
-        completeArtifactItems( artifactItems );
+        Maven2OsgiConverter maven2OsgiConverter = new DefaultMaven2OsgiConverter();
+        executeForMainArtifacts( maven2OsgiConverter );
+        if ( includeSources )
+            executeForSourceArtifacts( maven2OsgiConverter );
+    }
+
+
+    private void executeForMainArtifacts( Maven2OsgiConverter maven2OsgiConverter ) throws MojoExecutionException
+    {
+        completeArtifactItems( artifactItems, false );
 
         if ( !destinationDirectory.exists() && !destinationDirectory.mkdirs() )
         {
@@ -105,6 +135,58 @@ public class StudioCopyEclipseDependencyMojo extends AbstractStudioMojo
                 throw new MojoExecutionException( "Can't copy file.", ioe );
             }
         }
+    }
+
+
+    private void executeForSourceArtifacts( Maven2OsgiConverter maven2OsgiConverter ) throws MojoExecutionException
+    {
+        List<ArtifactItem> sourceArtifactItems = getCopyArtifactList();
+        completeArtifactItems( sourceArtifactItems, relaxed );
+
+        for ( Iterator<ArtifactItem> sourceItem = sourceArtifactItems.iterator(); sourceItem.hasNext(); )
+        {
+            ArtifactItem item = sourceItem.next();
+
+            if ( item.getArtifact() != null
+                && maven2OsgiConverter.getBundleSymbolicName( item.getArtifact() ).endsWith( SOURCE ) )
+            {
+                final File destFile = new File( destinationDirectory.getAbsoluteFile() + File.separator
+                    + maven2OsgiConverter.getBundleFileName( item.getArtifact() ) );
+                getLog().info(
+                    "Copying source artifact " + item.getArtifactId() + " to\n               "
+                        + destFile.getAbsolutePath() );
+                try
+                {
+                    FileUtils.copyFile( item.getArtifact().getFile(), destFile );
+                }
+                catch ( IOException ioe )
+                {
+                    throw new MojoExecutionException( "Can't copy file.", ioe );
+                }
+            }
+        }
+    }
+
+
+    private List<ArtifactItem> getCopyArtifactList()
+    {
+        List<ArtifactItem> sourceArtifactItems = new ArrayList<ArtifactItem>();
+        for ( Iterator<ArtifactItem> i = artifactItems.iterator(); i.hasNext(); )
+        {
+            ArtifactItem artifactItem = ( ArtifactItem ) i.next();
+            if ( StringUtils.isEmpty( artifactItem.getClassifier() ) || !SOURCES.equals( artifactItem.getClassifier() ) )
+            {
+                ArtifactItem sourceItem = new ArtifactItem();
+                sourceItem.setGroupId( artifactItem.getGroupId() );
+                sourceItem.setArtifactId( artifactItem.getArtifactId() );
+                sourceItem.setType( artifactItem.getType() );
+                sourceItem.setClassifier( SOURCES );
+                sourceItem.setVersion( artifactItem.getVersion() );
+                sourceArtifactItems.add( sourceItem );
+            }
+        }
+
+        return sourceArtifactItems;
     }
 
 

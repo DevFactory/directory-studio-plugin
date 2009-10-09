@@ -79,7 +79,7 @@ public class StudioUnpackPrefixedMojo extends AbstractStudioMojo
     public void execute() throws MojoExecutionException
     {
         final Maven2OsgiConverter maven2OsgiConverter = new DefaultMaven2OsgiConverter();
-        completeArtifactItems( artifactItems );
+        completeArtifactItems( artifactItems, false );
         for ( Iterator<ArtifactItem> artifactItem = artifactItems.iterator(); artifactItem.hasNext(); )
         {
             ArtifactItem item = artifactItem.next();

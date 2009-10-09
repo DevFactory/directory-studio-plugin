@@ -108,7 +108,7 @@ public class StudioReplaceFileInJarMojo extends AbstractStudioMojo
     {
         final Maven2OsgiConverter maven2OsgiConverter = new DefaultMaven2OsgiConverter();
 
-        completeArtifactItems( artifactItems );
+        completeArtifactItems( artifactItems, false );
 
         // Add file to packed file
         for ( Iterator<ArtifactItem> artifactItem = artifactItems.iterator(); artifactItem.hasNext(); )
