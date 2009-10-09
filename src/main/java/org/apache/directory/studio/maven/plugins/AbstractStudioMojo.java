@@ -152,6 +152,7 @@ public abstract class AbstractStudioMojo extends AbstractMojo
      */
     protected MavenProject project;
 
+
     /**
      * Unpack a file to a location
      * 
