@@ -34,7 +34,7 @@
   <name>Apache Directory Studio Plugin</name>
   <version>1.0.3-SNAPSHOT</version>
   <description>Maven2 plugin with specific goals for the Apache Directory Studio project</description>
-  <url>http://vm094.oxylos.org/projects/studio-plugin/</url>
+  <url>http://directory.apache.org/studio-plugin/gen-docs/${version}</url>
 
   <prerequisites>
     <maven>2.0.9</maven>
@@ -61,7 +61,7 @@
   </distributionManagement>
 
   <properties>
-    <distMgmtSiteUrl>scpexe://vm094.oxylos.org/var/www/html/projects/studio-plugin/</distMgmtSiteUrl>
+    <distMgmtSiteUrl>scpexe://people.apache.org/www/directory.apache.org/studio-plugin/gen-docs/${version}</distMgmtSiteUrl>
     <skin.version>1.0.0</skin.version>
   </properties>
   
