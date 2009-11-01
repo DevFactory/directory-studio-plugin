@@ -66,7 +66,7 @@ public abstract class AbstractStudioMojo extends AbstractMojo
     /**
      * To look up Archiver/UnArchiver implementations
      * 
-     * @parameter expression="${component.org.codehaus.plexus.archiver.manager.ArchiverManager}"
+     * @component role="component.org.codehaus.plexus.archiver.manager.ArchiverManager"
      * @required
      * @readonly
      */
@@ -84,7 +84,7 @@ public abstract class AbstractStudioMojo extends AbstractMojo
     /**
      * Used to look up Artifacts in the remote repository.
      * 
-     * @parameter expression="${component.org.apache.maven.artifact.factory.ArtifactFactory}"
+     * @component role="component.org.apache.maven.artifact.factory.ArtifactFactory"
      * @required
      * @readonly
      */
@@ -93,7 +93,7 @@ public abstract class AbstractStudioMojo extends AbstractMojo
     /**
      * Used to look up Artifacts in the remote repository.
      * 
-     * @parameter expression="${component.org.apache.maven.artifact.resolver.ArtifactResolver}"
+     * @component role="component.org.apache.maven.artifact.resolver.ArtifactResolver"
      * @required
      * @readonly
      */
