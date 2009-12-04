@@ -116,8 +116,8 @@ public class ArtifactItem
 
 
     /**
-     * @param artifactId
-     *            The artifactId to set.
+     * @param artifact
+     *            The artifact to set.
      */
     public void setArtifactId( String artifact )
     {

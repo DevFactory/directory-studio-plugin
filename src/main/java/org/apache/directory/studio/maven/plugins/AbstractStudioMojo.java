@@ -423,7 +423,7 @@ public abstract class AbstractStudioMojo extends AbstractMojo
      * Delete a directory
      * 
      * @param path
-     * @return
+     * @return True if directory is deleted
      */
     protected static boolean deleteDirectory( File path )
     {
@@ -448,7 +448,7 @@ public abstract class AbstractStudioMojo extends AbstractMojo
     /**
      * Return a list of artifacts nonscoped "provided"
      * 
-     * @return
+     * @return The artifact list
      */
     protected List<Artifact> createArtifactList()
     {
@@ -610,7 +610,7 @@ public abstract class AbstractStudioMojo extends AbstractMojo
 
 
     /**
-     * @param libraryPath
+     * @param pLibraryPath
      *            the libraryPath to set
      */
     public void setLibraryPath( String pLibraryPath )
