@@ -31,11 +31,10 @@ import org.apache.maven.shared.osgi.Maven2OsgiConverter;
 
 
 /**
- * Add ro replace file in existing, distributed artifact
+ * Add/Replace a file within a given eclipse artifact at a specific location
+ * (zip or jar file)
  * 
  * @goal replace-file-in-eclipse-artifact
- * @description Add/Replace a file within a given eclipse artifact at a specific
- *              location (zip or jar file)
  * @requiresProject
  * @requiresDependencyResolution runtime
  * @since 1.0

@@ -36,8 +36,6 @@ import org.apache.maven.plugin.MojoExecutionException;
  * @goal prepare-jar-package
  * @phase process-resources
  * @aggregate
- * @description Prepares for jar: Copy artifacts nonscoped "provided" to
- *              ${project.build.outputDirectory}/libraryPath
  * @requiresProject
  * @requiresDependencyResolution runtime
  * @since 1.0

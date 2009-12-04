@@ -46,16 +46,13 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  * <ul>
  * <li>Fork eclipse:eclipse goal and adapt generate files where needed</li>
  * <li>Copy artifacts nonscoped "provided" to ${basedir}/lib</li>
+ * <li>Add artifacts nonscoped "provided" to Bundle-ClassPath and MANIFEST.MF</li>
  * <li>Adapt ${basedir}/.classpath for artifacts nonscoped "provided"</li>
  * </ul>
  * </p>
  * 
  * @goal eclipse
  * @execute phase="generate-resources"
- * @description Copy artifacts nonscoped "provided" to libraryPath, Add
- *              artifacts nonscoped "provided" to Bundle-ClassPath and
- *              MANIFEST.MF, Adapt ${basedir}/.classpath for artifacts nonscoped
- *              "provided"
  * @requiresProject
  * @requiresDependencyResolution runtime
  * @since 1.0

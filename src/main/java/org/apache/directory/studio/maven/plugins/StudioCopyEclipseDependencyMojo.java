@@ -34,13 +34,10 @@ import org.codehaus.plexus.util.StringUtils;
 
 
 /**
- * Copy a set of artifacts to a configured output directory by replacing the
- * separator between artifactId and version by an underscore instead of a dash.
+ * Replace the separator between artifactId and version by an underscore instead
+ * of a dash and copy the artifact to a given destination directory.
  * 
  * @goal copy-eclipse-artifact
- * @description Replace the separator between artifactId and version by an
- *              underscore instead of a dash and copy the artifact to a given
- *              destination directory
  * @requiresProject
  * @requiresDependencyResolution runtime
  * @since 1.0

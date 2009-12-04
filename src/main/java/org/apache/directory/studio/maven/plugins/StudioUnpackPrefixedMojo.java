@@ -34,8 +34,6 @@ import org.apache.maven.shared.osgi.Maven2OsgiConverter;
  * named based on the artifacts final name
  * 
  * @goal unpack-with-artifactid-prefix
- * @description Prefixes the unpack of an artifact into a given directory with a
- *              directory named based on the artifacts final name
  * @requiresProject
  * @requiresDependencyResolution runtime
  * @since 1.0
