@@ -35,7 +35,7 @@ import org.apache.maven.plugin.MojoExecutionException;
  * 
  * @goal prepare-jar-package
  * @phase process-resources
- * @aggregate
+ * @aggregator
  * @requiresProject
  * @requiresDependencyResolution runtime
  * @since 1.0
