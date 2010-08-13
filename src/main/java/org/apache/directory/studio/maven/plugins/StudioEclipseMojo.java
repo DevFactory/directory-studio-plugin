@@ -94,13 +94,14 @@ public class StudioEclipseMojo extends AbstractStudioMojo
      */
     protected boolean createManifest;
 
+
     public void execute() throws MojoExecutionException
     {
         if ( project.isExecutionRoot() )
         {
             try
             {
-                forkMvnGoal( "eclipse:eclipse" );
+                forkMvnGoal( "eclipse:eclipse", project.getActiveProfiles() );
             }
             catch ( Exception e )
             {
@@ -141,7 +142,7 @@ public class StudioEclipseMojo extends AbstractStudioMojo
         {
             try
             {
-                forkMvnGoal( "bundle:manifest" );
+                forkMvnGoal( "bundle:manifest", project.getActiveProfiles() );
             }
             catch ( Exception e )
             {
@@ -208,16 +209,18 @@ public class StudioEclipseMojo extends AbstractStudioMojo
             {
                 entry = new Xpp3Dom( "classpathentry" );
                 entry.setAttribute( "kind", "lib" );
-                entry.setAttribute( "path", ( new StringBuilder() ).append( libraryPath ).append( '/' ).append(
-                    artifact.getFile().getName() ).toString() );
+                entry.setAttribute( "path",
+                    ( new StringBuilder() ).append( libraryPath ).append( '/' ).append( artifact.getFile().getName() )
+                        .toString() );
             }
             else
             {
                 entry = new Xpp3Dom( "classpathentry" );
                 entry.setAttribute( "exported", "true" );
                 entry.setAttribute( "kind", "lib" );
-                entry.setAttribute( "path", ( new StringBuilder() ).append( libraryPath ).append( '/' ).append(
-                    artifact.getFile().getName() ).toString() );
+                entry.setAttribute( "path",
+                    ( new StringBuilder() ).append( libraryPath ).append( '/' ).append( artifact.getFile().getName() )
+                        .toString() );
             }
             dom.addChild( entry );
         }

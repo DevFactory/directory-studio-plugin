@@ -50,7 +50,7 @@ public class StudioCleanMojo extends AbstractStudioMojo
         {
             try
             {
-                forkMvnGoal( "eclipse:clean" );
+                forkMvnGoal( "eclipse:clean", project.getActiveProfiles() );
             }
             catch ( Exception e )
             {

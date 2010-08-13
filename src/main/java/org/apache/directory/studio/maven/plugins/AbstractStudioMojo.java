@@ -38,6 +38,7 @@ import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.model.Dependency;
+import org.apache.maven.model.Profile;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
@@ -232,7 +233,7 @@ public abstract class AbstractStudioMojo extends AbstractMojo
      * @throws MavenExecutorException
      * @throws CommandLineException
      */
-    protected int forkMvnGoal( final String goal ) throws MavenExecutorException, CommandLineException
+    protected int forkMvnGoal( final String goal, List profiles ) throws MavenExecutorException, CommandLineException
     {
         CommandLineFactory commandLineFactory = new DefaultCommandLineFactory();
         Commandline cl = commandLineFactory.createCommandLine( "mvn" );
@@ -243,6 +244,26 @@ public abstract class AbstractStudioMojo extends AbstractMojo
         cl.createArg().setValue( goal );
         cl.createArg().setValue( "--no-plugin-updates" );
         cl.createArg().setValue( "--batch-mode" );
+
+        // Profiles ("-Pxxx") argument
+        if ( ( profiles != null ) && ( profiles.size() > 0 ) )
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.append( "-P" );
+            for ( Object profileObject : profiles )
+            {
+                if ( profileObject instanceof Profile )
+                {
+                    Profile profile = ( Profile ) profileObject;
+                    sb.append( profile.getId() );
+                    sb.append( ',' );
+                }
+            }
+            sb.deleteCharAt( sb.length() - 1 );
+
+            cl.createArg().setValue( sb.toString() );
+        }
+
         TeeOutputStream stdOut = new TeeOutputStream( System.out );
         TeeOutputStream stdErr = new TeeOutputStream( System.err );
         return ForkedMavenExecutor.executeCommandLine( cl, System.in, stdOut, stdErr );
