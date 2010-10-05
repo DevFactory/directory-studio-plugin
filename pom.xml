@@ -23,7 +23,7 @@
 
   <parent>
     <groupId>org.apache.directory.project</groupId>
-    <version>17</version>
+    <version>18</version>
     <artifactId>project</artifactId>
   </parent>
 
@@ -62,7 +62,7 @@
 
   <properties>
     <distMgmtSiteUrl>scpexe://people.apache.org/www/directory.apache.org/studio-plugin/gen-docs/${version}</distMgmtSiteUrl>
-    <skin.version>1.0.1</skin.version>
+    <skin.version>1.0.2-SNAPSHOT</skin.version>
   </properties>
   
   <build>
