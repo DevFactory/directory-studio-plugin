@@ -172,6 +172,8 @@ public abstract class AbstractStudioMojo extends AbstractMojo
      *            The location to unpack the file to
      * @param file
      *            The file to unpack
+     * @throws Exception
+     *            If an error occurs
      */
     protected void unpackToLocation( final File location, final File file ) throws Exception
     {
@@ -204,7 +206,7 @@ public abstract class AbstractStudioMojo extends AbstractMojo
      *            A location to pack
      * @param file
      *            The file to pack the location into
-     * @throws Exception
+     * @throws MojoExecutionException
      *             If an error occurs
      */
     protected void packFromLocation( final File location, final File file ) throws MojoExecutionException
@@ -420,6 +422,7 @@ public abstract class AbstractStudioMojo extends AbstractMojo
      * @param artifact
      *            representing configured file.
      * @throws MojoExecutionException
+     *            if something goes wrong
      */
     protected void fillMissingArtifactVersion( ArtifactItem artifact ) throws MojoExecutionException
     {
@@ -474,16 +477,20 @@ public abstract class AbstractStudioMojo extends AbstractMojo
      * Complete the artifacts in the artifactItems list (e.g. complete with
      * version number)
      *
+     * @param artifactItems
+     *            the artifact items
+     * @param relaxed
+     *            the relaxed
      * @throws MojoExecutionException
+     *            if something goes wrong
      */
     protected void completeArtifactItems( List<ArtifactItem> artifactItems, boolean relaxed )
         throws MojoExecutionException
     {
         List<String> warnings = new ArrayList<String>();
         // Get and complete artifacts
-        for ( Iterator<ArtifactItem> artifactItem = artifactItems.iterator(); artifactItem.hasNext(); )
+        for ( ArtifactItem item : artifactItems )
         {
-            ArtifactItem item = artifactItem.next();
             try
             {
                 // make sure we have a version.
@@ -525,6 +532,7 @@ public abstract class AbstractStudioMojo extends AbstractMojo
      * Delete a directory
      *
      * @param path
+     *            the path to the directory to delete
      * @return True if directory is deleted
      */
     protected static boolean deleteDirectory( File path )
@@ -557,7 +565,8 @@ public abstract class AbstractStudioMojo extends AbstractMojo
         List<Artifact> list = new ArrayList<Artifact>();
 
         // Copying only artifacts with 'provided' scope
-        for ( Iterator<Artifact> artifactItem = project.getArtifacts().iterator(); artifactItem.hasNext(); )
+        Iterator<Artifact> artifactItem = project.getArtifacts().iterator();
+        while ( artifactItem.hasNext() )
         {
             Artifact artifact = ( Artifact ) artifactItem.next();
             if ( !artifact.getScope().equalsIgnoreCase( "provided" ) )
