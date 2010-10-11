@@ -6,16 +6,16 @@
  *  to you under the Apache License, Version 2.0 (the
  *  "License"); you may not use this file except in compliance
  *  with the License.  You may obtain a copy of the License at
- *  
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  *  Unless required by applicable law or agreed to in writing,
  *  software distributed under the License is distributed on an
  *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  *  KIND, either express or implied.  See the License for the
  *  specific language governing permissions and limitations
- *  under the License. 
- *  
+ *  under the License.
+ *
  */
 package org.apache.directory.studio.maven.plugins;
 
@@ -37,10 +37,12 @@ import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.VersionRange;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Profile;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.profiles.DefaultProfileManager;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.exec.CommandLineFactory;
 import org.apache.maven.shared.release.exec.DefaultCommandLineFactory;
@@ -58,7 +60,7 @@ import org.codehaus.plexus.util.cli.Commandline;
 
 /**
  * The abstract studio mojo
- * 
+ *
  * @author <a href="mailto:dev@directory.apache.org">Apache Directory Project</a>
  */
 public abstract class AbstractStudioMojo extends AbstractMojo
@@ -66,7 +68,7 @@ public abstract class AbstractStudioMojo extends AbstractMojo
 
     /**
      * To look up Archiver/UnArchiver implementations
-     * 
+     *
      * @component role="org.codehaus.plexus.archiver.manager.ArchiverManager"
      * @required
      * @readonly
@@ -75,7 +77,7 @@ public abstract class AbstractStudioMojo extends AbstractMojo
 
     /**
      * Location of the file.
-     * 
+     *
      * @parameter expression="${project.build.directory}"
      * @required
      * @readonly
@@ -84,7 +86,7 @@ public abstract class AbstractStudioMojo extends AbstractMojo
 
     /**
      * Used to look up Artifacts in the remote repository.
-     * 
+     *
      * @component role="org.apache.maven.artifact.factory.ArtifactFactory"
      * @required
      * @readonly
@@ -93,7 +95,7 @@ public abstract class AbstractStudioMojo extends AbstractMojo
 
     /**
      * Used to look up Artifacts in the remote repository.
-     * 
+     *
      * @component role="org.apache.maven.artifact.resolver.ArtifactResolver"
      * @required
      * @readonly
@@ -102,7 +104,7 @@ public abstract class AbstractStudioMojo extends AbstractMojo
 
     /**
      * Relativ Path to copy libraries to.
-     * 
+     *
      * @parameter expression="${libraryPath}" default-value="lib"
      * @required
      * @readonly
@@ -111,7 +113,7 @@ public abstract class AbstractStudioMojo extends AbstractMojo
 
     /**
      * Artifact collector, needed to resolve dependencies.
-     * 
+     *
      * @component role="org.apache.maven.artifact.resolver.ArtifactCollector"
      * @required
      * @readonly
@@ -128,7 +130,7 @@ public abstract class AbstractStudioMojo extends AbstractMojo
 
     /**
      * Location of the local repository.
-     * 
+     *
      * @parameter expression="${localRepository}"
      * @readonly
      * @required
@@ -137,7 +139,7 @@ public abstract class AbstractStudioMojo extends AbstractMojo
 
     /**
      * List of Remote Repositories used by the resolver
-     * 
+     *
      * @parameter expression="${project.remoteArtifactRepositories}"
      * @readonly
      * @required
@@ -146,17 +148,26 @@ public abstract class AbstractStudioMojo extends AbstractMojo
 
     /**
      * POM
-     * 
+     *
      * @parameter expression="${project}"
      * @readonly
      * @required
      */
     protected MavenProject project;
 
+    /**
+     * The current build session instance. This is used for plugin manager API calls.
+     *
+     * @parameter expression="${session}"
+     * @required
+     * @readonly
+     */
+    private MavenSession session;
+
 
     /**
      * Unpack a file to a location
-     * 
+     *
      * @param location
      *            The location to unpack the file to
      * @param file
@@ -188,7 +199,7 @@ public abstract class AbstractStudioMojo extends AbstractMojo
 
     /**
      * Pack a given location into a file
-     * 
+     *
      * @param location
      *            A location to pack
      * @param file
@@ -225,15 +236,17 @@ public abstract class AbstractStudioMojo extends AbstractMojo
 
 
     /**
-     * Fork a maven goal
-     * 
-     * @param goal
-     *            the goal
+     * Fork a maven goal.
+     *
+     * @param goal the goal
+     * @param activeProfileIds the active profile IDs
+     * @param inactiveProfileIds the inactive profile IDs
      * @return the result
-     * @throws MavenExecutorException
-     * @throws CommandLineException
+     * @throws MavenExecutorException the maven executor exception
+     * @throws CommandLineException the command line exception
      */
-    protected int forkMvnGoal( final String goal, List profiles ) throws MavenExecutorException, CommandLineException
+    protected int forkMvnGoal( final String goal, List<String> activeProfileIds, List<String> inactiveProfileIds )
+        throws MavenExecutorException, CommandLineException
     {
         CommandLineFactory commandLineFactory = new DefaultCommandLineFactory();
         Commandline cl = commandLineFactory.createCommandLine( "mvn" );
@@ -246,19 +259,31 @@ public abstract class AbstractStudioMojo extends AbstractMojo
         cl.createArg().setValue( "--batch-mode" );
 
         // Profiles ("-Pxxx") argument
-        if ( ( profiles != null ) && ( profiles.size() > 0 ) )
+        if ( ( ( activeProfileIds != null ) && ( activeProfileIds.size() > 0 ) )
+            || ( ( inactiveProfileIds != null ) && ( inactiveProfileIds.size() > 0 ) ) )
         {
             StringBuilder sb = new StringBuilder();
             sb.append( "-P" );
-            for ( Object profileObject : profiles )
+
+            if ( ( activeProfileIds != null ) && ( activeProfileIds.size() > 0 ) )
             {
-                if ( profileObject instanceof Profile )
+                for ( String activeProfileId : activeProfileIds )
                 {
-                    Profile profile = ( Profile ) profileObject;
-                    sb.append( profile.getId() );
+                    sb.append( activeProfileId );
                     sb.append( ',' );
                 }
             }
+
+            if ( ( inactiveProfileIds != null ) && ( inactiveProfileIds.size() > 0 ) )
+            {
+                for ( String inactiveProfileId : inactiveProfileIds )
+                {
+                    sb.append( '-' );
+                    sb.append( inactiveProfileId );
+                    sb.append( ',' );
+                }
+            }
+
             sb.deleteCharAt( sb.length() - 1 );
 
             cl.createArg().setValue( sb.toString() );
@@ -267,7 +292,63 @@ public abstract class AbstractStudioMojo extends AbstractMojo
         TeeOutputStream stdOut = new TeeOutputStream( System.out );
         TeeOutputStream stdErr = new TeeOutputStream( System.err );
         return ForkedMavenExecutor.executeCommandLine( cl, System.in, stdOut, stdErr );
+    }
 
+
+    /**
+     * Gets the active profile IDs.
+     *
+     * @return the active profile IDs
+     */
+    protected List<String> getActiveProfileIds()
+    {
+        List<String> activeProfileIds = new ArrayList<String>();
+
+        List activeProfiles = project.getActiveProfiles();
+        if ( activeProfiles != null )
+        {
+            for ( Object profileObject : activeProfiles )
+            {
+                if ( profileObject instanceof Profile )
+                {
+                    Profile profile = ( Profile ) profileObject;
+                    activeProfileIds.add( profile.getId() );
+                }
+            }
+        }
+
+        return activeProfileIds;
+    }
+
+
+    /**
+     * Gets the inactive profile IDs.
+     *
+     * @return the inactive profile IDs
+     */
+    protected List<String> getInactiveProfileIds()
+    {
+        List<String> inactiveProfileIds = new ArrayList<String>();
+        List<String> activeProfileIds = getActiveProfileIds();
+
+        DefaultProfileManager pm = new DefaultProfileManager( session.getContainer(), session.getExecutionProperties() );
+        MavenProject parent = project;
+        while ( parent != null )
+        {
+            for ( Profile profile : parent.getModel().getProfiles() )
+            {
+                String profileId = profile.getId();
+                pm.explicitlyActivate( profileId );
+                if ( !activeProfileIds.contains( profileId ) )
+                {
+                    inactiveProfileIds.add( profileId );
+                }
+            }
+
+            parent = parent.getParent();
+        }
+
+        return inactiveProfileIds;
     }
 
 
@@ -275,12 +356,12 @@ public abstract class AbstractStudioMojo extends AbstractMojo
      * Resolves the Artifact from the remote repository if necessary. If no
      * version is specified, it will be retrieved from the dependency list or
      * from the DependencyManagement section of the pom.
-     * 
+     *
      * @param artifactItem
      *            containing information about artifact from plugin
      *            configuration.
      * @return Artifact object representing the specified file.
-     * 
+     *
      * @throws MojoExecutionException
      *             with a message if the version can't be found in
      *             DependencyManagement.
@@ -331,11 +412,11 @@ public abstract class AbstractStudioMojo extends AbstractMojo
     /**
      * Tries to find missing version from dependancy list and dependency
      * management. If found, the artifact is updated with the correct version.
-     * 
+     *
      * It will first look for an exact match on
      * artifactId/groupId/classifier/type and if it doesn't find a match, it
      * will try again looking for artifactId and groupId only.
-     * 
+     *
      * @param artifact
      *            representing configured file.
      * @throws MojoExecutionException
@@ -358,7 +439,7 @@ public abstract class AbstractStudioMojo extends AbstractMojo
     /**
      * Tries to find missing version from a list of dependencies. If found, the
      * artifact is updated with the correct version.
-     * 
+     *
      * @param artifact
      *            representing configured file.
      * @param list
@@ -392,7 +473,7 @@ public abstract class AbstractStudioMojo extends AbstractMojo
     /**
      * Complete the artifacts in the artifactItems list (e.g. complete with
      * version number)
-     * 
+     *
      * @throws MojoExecutionException
      */
     protected void completeArtifactItems( List<ArtifactItem> artifactItems, boolean relaxed )
@@ -442,7 +523,7 @@ public abstract class AbstractStudioMojo extends AbstractMojo
 
     /**
      * Delete a directory
-     * 
+     *
      * @param path
      * @return True if directory is deleted
      */
@@ -468,7 +549,7 @@ public abstract class AbstractStudioMojo extends AbstractMojo
 
     /**
      * Return a list of artifacts nonscoped "provided"
-     * 
+     *
      * @return The artifact list
      */
     protected List<Artifact> createArtifactList()

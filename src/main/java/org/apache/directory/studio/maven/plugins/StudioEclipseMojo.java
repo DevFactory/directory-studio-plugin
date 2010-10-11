@@ -6,16 +6,16 @@
  *  to you under the Apache License, Version 2.0 (the
  *  "License"); you may not use this file except in compliance
  *  with the License.  You may obtain a copy of the License at
- *  
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  *  Unless required by applicable law or agreed to in writing,
  *  software distributed under the License is distributed on an
  *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  *  KIND, either express or implied.  See the License for the
  *  specific language governing permissions and limitations
- *  under the License. 
- *  
+ *  under the License.
+ *
  */
 package org.apache.directory.studio.maven.plugins;
 
@@ -50,13 +50,13 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  * <li>Adapt ${basedir}/.classpath for artifacts nonscoped "provided"</li>
  * </ul>
  * </p>
- * 
+ *
  * @goal eclipse
  * @execute phase="generate-resources"
  * @requiresProject
  * @requiresDependencyResolution runtime
  * @since 1.0
- * 
+ *
  * @author <a href="mailto:dev@directory.apache.org">Apache Directory Project</a>
  */
 public class StudioEclipseMojo extends AbstractStudioMojo
@@ -79,7 +79,7 @@ public class StudioEclipseMojo extends AbstractStudioMojo
 
     /**
      * Flag if artifacts shall be copied and eclipse specific files shall be adapted.
-     * 
+     *
      * @parameter expression="${skip}" default-value="true"
      * @required
      * @since 1.0
@@ -88,7 +88,7 @@ public class StudioEclipseMojo extends AbstractStudioMojo
 
     /**
      * Flag if manifest file shall be created.
-     * 
+     *
      * @parameter expression="${createManifest}" default-value="false"
      * @since 1.0.1
      */
@@ -101,7 +101,7 @@ public class StudioEclipseMojo extends AbstractStudioMojo
         {
             try
             {
-                forkMvnGoal( "eclipse:eclipse", project.getActiveProfiles() );
+                forkMvnGoal( "eclipse:eclipse", getActiveProfileIds(), getInactiveProfileIds() );
             }
             catch ( Exception e )
             {
@@ -142,7 +142,7 @@ public class StudioEclipseMojo extends AbstractStudioMojo
         {
             try
             {
-                forkMvnGoal( "bundle:manifest", project.getActiveProfiles() );
+                forkMvnGoal( "bundle:manifest", getActiveProfileIds(), getInactiveProfileIds() );
             }
             catch ( Exception e )
             {
@@ -154,7 +154,7 @@ public class StudioEclipseMojo extends AbstractStudioMojo
 
     /**
      * Copy artifacts to ${basedir}/lib
-     * 
+     *
      * @param list
      * @throws IOException
      */
@@ -183,7 +183,7 @@ public class StudioEclipseMojo extends AbstractStudioMojo
 
     /**
      * Adapt the ${basedir}/.classpath
-     * 
+     *
      * @param list
      */
     private void updateDotClasspath( List<Artifact> list ) throws IOException, XmlPullParserException
@@ -237,7 +237,7 @@ public class StudioEclipseMojo extends AbstractStudioMojo
 
     /**
      * Adapt the ${basedir}/.project
-     * 
+     *
      * @param list
      */
     private void updateDotProject() throws IOException, XmlPullParserException
