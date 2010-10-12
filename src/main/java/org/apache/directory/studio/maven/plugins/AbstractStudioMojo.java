@@ -162,7 +162,7 @@ public abstract class AbstractStudioMojo extends AbstractMojo
      * @required
      * @readonly
      */
-    private MavenSession session;
+    protected MavenSession session;
 
 
     /**
@@ -180,7 +180,10 @@ public abstract class AbstractStudioMojo extends AbstractMojo
         try
         {
             getLog().info( "Unpacking " + file + " to\n                 " + location );
-            location.mkdirs();
+            if ( !location.mkdirs() )
+            {
+                throw new IOException( "Failed to create directory " + location );
+            }
             UnArchiver unArchiver = archiverManager.getUnArchiver( file );
             unArchiver.setSourceFile( file );
             unArchiver.setDestDirectory( location );
@@ -543,11 +546,17 @@ public abstract class AbstractStudioMojo extends AbstractMojo
             {
                 if ( file.isDirectory() )
                 {
-                    deleteDirectory( file );
+                    if ( !deleteDirectory( file ) )
+                    {
+                        return false;
+                    }
                 }
                 else
                 {
-                    file.delete();
+                    if ( !file.delete() )
+                    {
+                        return false;
+                    }
                 }
             }
         }

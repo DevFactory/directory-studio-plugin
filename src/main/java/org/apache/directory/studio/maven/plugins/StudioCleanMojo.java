@@ -21,6 +21,7 @@ package org.apache.directory.studio.maven.plugins;
 
 
 import java.io.File;
+import java.io.IOException;
 
 import org.apache.maven.plugin.MojoExecutionException;
 
@@ -38,9 +39,9 @@ import org.apache.maven.plugin.MojoExecutionException;
 public class StudioCleanMojo extends AbstractStudioMojo
 {
 
-    private final String MAVEN_ECLIPSE_XML = "maven-eclipse.xml";
-    private final String EXTERNAL_TOOL_BUILDERS_DIR = ".externalToolBuilders";
-    private final String META_INF = "META-INF";
+    private static final String MAVEN_ECLIPSE_XML = "maven-eclipse.xml";
+    private static final String EXTERNAL_TOOL_BUILDERS_DIR = ".externalToolBuilders";
+    private static final String META_INF = "META-INF";
 
 
     public void execute() throws MojoExecutionException
@@ -61,7 +62,10 @@ public class StudioCleanMojo extends AbstractStudioMojo
         {
             File file = new File( project.getBasedir(), MAVEN_ECLIPSE_XML );
             getLog().info( "Deleting " + file );
-            file.delete();
+            if ( !file.delete() )
+            {
+                throw new IOException( "Failed to delete file " + file );
+            }
             file = new File( project.getBasedir(), EXTERNAL_TOOL_BUILDERS_DIR );
             getLog().info( "Deleting " + file );
             deleteDirectory( file );

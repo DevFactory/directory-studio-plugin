@@ -165,8 +165,10 @@ public class StudioEclipseMojo extends AbstractStudioMojo
         {
             final File copyDir = new File( project.getBasedir(), libraryPath );
 
-            if ( !copyDir.exists() )
-                copyDir.mkdirs();
+            if ( !copyDir.exists() && !copyDir.mkdirs() )
+            {
+                throw new IOException( "Failed to create directory " + copyDir );
+            }
 
             for ( Artifact artifact : list )
             {
@@ -270,13 +272,16 @@ public class StudioEclipseMojo extends AbstractStudioMojo
 
 
     /**
-     * remove ${basedir}/maven-eclipse.xml
+     * Remove ${basedir}/maven-eclipse.xml
+     * @throws IOException if the file can't be deleted
      */
-    void removeMavenEclipseXml()
+    void removeMavenEclipseXml() throws IOException
     {
         File file = new File( project.getBasedir(), "maven-eclipse.xml" );
-        if ( file.exists() )
-            file.delete();
+        if ( file.exists() && !file.delete() )
+        {
+            throw new IOException( "Failed to delete file " + file );
+        }
     }
 
 

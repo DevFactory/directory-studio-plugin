@@ -6,16 +6,16 @@
  *  to you under the Apache License, Version 2.0 (the
  *  "License"); you may not use this file except in compliance
  *  with the License.  You may obtain a copy of the License at
- *  
+ *
  *    http://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  *  Unless required by applicable law or agreed to in writing,
  *  software distributed under the License is distributed on an
  *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  *  KIND, either express or implied.  See the License for the
  *  specific language governing permissions and limitations
- *  under the License. 
- *  
+ *  under the License.
+ *
  */
 package org.apache.directory.studio.maven.plugins;
 
@@ -32,14 +32,14 @@ import org.apache.maven.plugin.MojoExecutionException;
 /**
  * Prepares for jar: Copy artifacts nonscoped "provided" to
  * ${project.build.outputDirectory}/libraryPath
- * 
+ *
  * @goal prepare-jar-package
  * @phase process-resources
  * @aggregator
  * @requiresProject
  * @requiresDependencyResolution runtime
  * @since 1.0
- * 
+ *
  * @author <a href="mailto:dev@directory.apache.org">Apache Directory Project</a>
  */
 public class StudioPrepareJarPackageMojo extends AbstractStudioMojo
@@ -47,11 +47,12 @@ public class StudioPrepareJarPackageMojo extends AbstractStudioMojo
 
     /**
      * Directory containing the classes.
-     * 
+     *
      * @parameter expression="${project.build.outputDirectory}"
      * @readonly
      * @required
      */
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings(value="UWF_UNWRITTEN_FIELD")
     private File classesOutDir;
 
 
@@ -75,7 +76,7 @@ public class StudioPrepareJarPackageMojo extends AbstractStudioMojo
 
     /**
      * Copy artifacts to ${basedir}/lib
-     * 
+     *
      * @param list
      * @throws IOException
      */
@@ -86,8 +87,10 @@ public class StudioPrepareJarPackageMojo extends AbstractStudioMojo
         {
             final File copyDir = new File( classesOutDir, libraryPath );
 
-            if ( !copyDir.exists() )
-                copyDir.mkdirs();
+            if ( !copyDir.exists() && !copyDir.mkdirs() )
+            {
+                throw new IOException( "Failed to create directory " + copyDir );
+            }
 
             for ( Artifact artifact : list )
             {

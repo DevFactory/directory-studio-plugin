@@ -61,9 +61,9 @@
   </distributionManagement>
 
   <properties>
-    <distMgmtSiteUrl>scpexe://people.apache.org/www/directory.apache.org/studio-plugin/gen-docs/${version}</distMgmtSiteUrl>
+    <distMgmtSiteUrl>scpexe://people.apache.org/www/directory.apache.org/studio-plugin/gen-docs/${project.version}</distMgmtSiteUrl>
     <skin.version>1.0.2</skin.version>
-    <org.apache.directory.buildtools.directory-checkstyle.version>0.1-SNAPSHOT</org.apache.directory.buildtools.directory-checkstyle.version>
+    <org.apache.directory.buildtools.checkstyle-configuration.version>0.1</org.apache.directory.buildtools.checkstyle-configuration.version>
   </properties>
 
   <build>
@@ -74,8 +74,8 @@
         <dependencies>
           <dependency>
             <groupId>org.apache.directory.buildtools</groupId>
-            <artifactId>directory-checkstyle</artifactId>
-            <version>${org.apache.directory.buildtools.directory-checkstyle.version}</version>
+            <artifactId>checkstyle-configuration</artifactId>
+            <version>${org.apache.directory.buildtools.checkstyle-configuration.version}</version>
           </dependency>
         </dependencies>
       </plugin>
@@ -192,6 +192,11 @@
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
       <version>2.0.5</version>
+    </dependency>
+    <dependency>
+      <groupId>findbugs</groupId>
+      <artifactId>annotations</artifactId>
+      <version>1.0.0</version>
     </dependency>
 
     <!-- Test -->
@@ -383,6 +388,11 @@
             <exclude>**/*.iws</exclude>
             <!-- MANIFEST_MF_EXCLUDES -->
             <exclude>**/MANIFEST.MF</exclude>
+            <!-- Files used for testing -->
+            <exclude>src/test/resources/unit/basic-clean-test/.externalToolBuilders</exclude>
+            <exclude>src/test/resources/unit/basic-clean-test/maven-eclipse.xml</exclude>
+            <exclude>src/test/resources/org/apache/directory/studio/maven/plugins/test-copy-repo/repo-marker.txt</exclude>
+            <exclude>src/test/resources/org/apache/directory/studio/maven/plugins/test-copy-repo/org/eclipse/**</exclude>
           </excludes>
         </configuration>
       </plugin>
