@@ -180,7 +180,7 @@ public abstract class AbstractStudioMojo extends AbstractMojo
         try
         {
             getLog().info( "Unpacking " + file + " to\n                 " + location );
-            if ( !location.mkdirs() )
+            if ( !location.exists() && !location.mkdirs() )
             {
                 throw new IOException( "Failed to create directory " + location );
             }

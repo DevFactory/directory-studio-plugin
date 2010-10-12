@@ -62,7 +62,7 @@ public class StudioCleanMojo extends AbstractStudioMojo
         {
             File file = new File( project.getBasedir(), MAVEN_ECLIPSE_XML );
             getLog().info( "Deleting " + file );
-            if ( !file.delete() )
+            if ( file.exists() && !file.delete() )
             {
                 throw new IOException( "Failed to delete file " + file );
             }
