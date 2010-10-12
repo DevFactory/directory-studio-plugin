@@ -86,14 +86,6 @@ public class StudioEclipseMojo extends AbstractStudioMojo
      */
     protected boolean skip;
 
-    /**
-     * Flag if manifest file shall be created.
-     *
-     * @parameter expression="${createManifest}" default-value="false"
-     * @since 1.0.1
-     */
-    protected boolean createManifest;
-
 
     public void execute() throws MojoExecutionException
     {
@@ -102,6 +94,13 @@ public class StudioEclipseMojo extends AbstractStudioMojo
             try
             {
                 forkMvnGoal( "eclipse:eclipse", getActiveProfileIds(), getInactiveProfileIds() );
+                /*
+                 * Run full process-classes phase here. This ensures that dependencies
+                 * were resolved and classes were compiled before bundle:manifest
+                 * is executed and MANIFEST.MF is written.
+                 * Must run after eclipse:eclipse, otherwise Bundle-Classpath is corrupt.
+                 */
+                forkMvnGoal( "process-classes", getActiveProfileIds(), getInactiveProfileIds() );
             }
             catch ( Exception e )
             {
@@ -136,17 +135,6 @@ public class StudioEclipseMojo extends AbstractStudioMojo
             catch ( Exception e )
             {
                 getLog().error( e );
-            }
-        }
-        if ( createManifest )
-        {
-            try
-            {
-                forkMvnGoal( "bundle:manifest", getActiveProfileIds(), getInactiveProfileIds() );
-            }
-            catch ( Exception e )
-            {
-                throw new MojoExecutionException( e.getMessage() );
             }
         }
     }
